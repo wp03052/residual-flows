@@ -35,6 +35,9 @@ class ActNormNd(nn.Module):
                 self.bias.data.copy_(-batch_mean)
                 self.weight.data.copy_(-0.5 * torch.log(batch_var))
                 self.initialized.fill_(1)
+        else:
+            self.bias.data.copy_(torch.zeros(self.bias.shape[0], device=x.device))
+            self.weight.data.copy_(torch.zeros(self.weight.shape[0], device=x.device))
 
         bias = self.bias.view(*self.shape).expand_as(x)
         weight = self.weight.view(*self.shape).expand_as(x)
@@ -45,7 +48,7 @@ class ActNormNd(nn.Module):
             return x
         else:
             # return y, logpx - self._logdetgrad(x)
-            return x, logpx
+            return y, logpx
 
     def inverse(self, y, logpy=None):
         assert self.initialized
