@@ -139,7 +139,6 @@ class iResBlock(nn.Module):
                     g, logdetgrad = mem_eff_wrapper(
                         estimator_fn, self.nnet, x, n_power_series, vareps, coeff_fn, self.training
                     )
-                    print(logdetgrad)
                 else:
                     x = x.requires_grad_(True)
                     g = self.nnet(x)
