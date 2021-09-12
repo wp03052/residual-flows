@@ -44,7 +44,8 @@ class ActNormNd(nn.Module):
         if logpx is None:
             return y
         else:
-            return y, logpx - self._logdetgrad(x)
+            # return y, logpx - self._logdetgrad(x)
+            return y, logpx
 
     def inverse(self, y, logpy=None):
         assert self.initialized
