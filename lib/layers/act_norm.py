@@ -57,7 +57,8 @@ class ActNormNd(nn.Module):
         if logpy is None:
             return x
         else:
-            return x, logpy + self._logdetgrad(x)
+            # return x, logpy + self._logdetgrad(x)
+            return x, logpy
 
     def _logdetgrad(self, x):
         return self.weight.view(*self.shape).expand(*x.size()).contiguous().view(x.size(0), -1).sum(1, keepdim=True)
