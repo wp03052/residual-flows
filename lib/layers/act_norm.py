@@ -42,10 +42,10 @@ class ActNormNd(nn.Module):
         y = (x + bias) * torch.exp(weight)
 
         if logpx is None:
-            return y
+            return x
         else:
             # return y, logpx - self._logdetgrad(x)
-            return y, logpx
+            return x, logpx
 
     def inverse(self, y, logpy=None):
         assert self.initialized
@@ -55,10 +55,10 @@ class ActNormNd(nn.Module):
         x = y * torch.exp(-weight) - bias
 
         if logpy is None:
-            return x
+            return y
         else:
             # return x, logpy + self._logdetgrad(x)
-            return x, logpy
+            return y, logpy
 
     def _logdetgrad(self, x):
         return self.weight.view(*self.shape).expand(*x.size()).contiguous().view(x.size(0), -1).sum(1, keepdim=True)
