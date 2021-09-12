@@ -11,14 +11,27 @@ class ActNormNd(nn.Module):
         super(ActNormNd, self).__init__()
         self.num_features = num_features
         self.eps = eps
-        self.weight = Parameter(torch.Tensor(num_features))
-        self.bias = Parameter(torch.Tensor(num_features))
-        self.register_buffer('initialized', torch.tensor(0))
+        # self.weight = Parameter(torch.Tensor(num_features))
+        # self.bias = Parameter(torch.Tensor(num_features))
+        # if actnorm_initialize:
+        #     self.register_buffer('initialized', torch.tensor(1))
+        # else:
+        #     self.register_buffer('initialized', torch.tensor(0))
+        # self.register_buffer('initialized', torch.tensor(0))
 
     @property
     def shape(self):
         raise NotImplementedError
 
+    # do not use actnorm
+    def forward(self, x, logpx=None):
+        if logpx is None:
+            return x
+        else:
+            return x, logpx
+
+    # original actnorm forward
+    '''
     def forward(self, x, logpx=None):
         c = x.size(1)
 
@@ -35,6 +48,9 @@ class ActNormNd(nn.Module):
                 self.bias.data.copy_(-batch_mean)
                 self.weight.data.copy_(-0.5 * torch.log(batch_var))
                 self.initialized.fill_(1)
+        else:
+            self.bias.data.copy_(torch.zeros(self.bias.shape[0], device=x.device))
+            self.weight.data.copy_(torch.zeros(self.weight.shape[0], device=x.device))
 
         bias = self.bias.view(*self.shape).expand_as(x)
         weight = self.weight.view(*self.shape).expand_as(x)
@@ -45,19 +61,31 @@ class ActNormNd(nn.Module):
             return y
         else:
             return y, logpx - self._logdetgrad(x)
+    '''
 
+    # do not use actnorm
     def inverse(self, y, logpy=None):
-        assert self.initialized
+        if logpy is None:
+            return y
+        else:
+            return y, logpy
+
+    # original actnorm inverse
+    '''
+    def inverse(self, y, logpy=None):
+        # if self.initialized:
+        #     self.bias.data.copy_(torch.zeros(self.bias.shape[0], device=y.device))
+        #     self.weight.data.copy_(torch.zeros(self.weight.shape[0], device=y.device))
+        # assert self.initialized
         bias = self.bias.view(*self.shape).expand_as(y)
         weight = self.weight.view(*self.shape).expand_as(y)
 
         x = y * torch.exp(-weight) - bias
-
         if logpy is None:
             return x
         else:
             return x, logpy + self._logdetgrad(x)
-
+    '''
     def _logdetgrad(self, x):
         return self.weight.view(*self.shape).expand(*x.size()).contiguous().view(x.size(0), -1).sum(1, keepdim=True)
 
