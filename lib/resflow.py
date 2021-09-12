@@ -188,6 +188,8 @@ class ResidualFlow(nn.Module):
         self.logit_layer = nn.Linear(self.classification_hdim * len(classification_heads), self.n_classes)
 
     def forward(self, x, logpx=None, inverse=False, classify=False):
+        import pdb
+        pdb.set_trace()
         if inverse:
             return self.inverse(x, logpx)
         out = []
