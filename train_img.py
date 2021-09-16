@@ -534,9 +534,6 @@ def compute_loss(x, model, beta=1.0):
     elif args.task == 'classification':
         z, logits_tensor = model(x.view(-1, *input_size[1:]), classify=True)
 
-    import pdb
-    pdb.set_trace()
-
     if args.task in ['density', 'hybrid']:
         # log p(z)
         logpz = standard_normal_logprob(z).view(z.size(0), -1).sum(1, keepdim=True)
@@ -607,6 +604,7 @@ def train(epoch, model):
         #   compute z = f(x)
         #   maximize log p(x) = log p(z) - log |det df/dx|
 
+        # x = x + 0.2 * torch.randn_like(x)
         x = x.to(device)
 
         beta = beta = min(1, global_itr / args.annealing_iters) if args.annealing_iters > 0 else 1.
