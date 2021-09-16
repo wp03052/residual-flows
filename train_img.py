@@ -98,6 +98,9 @@ parser.add_argument('--begin-epoch', type=int, default=0)
 parser.add_argument('--nworkers', type=int, default=4)
 parser.add_argument('--print-freq', help='Print progress every so iterations', type=int, default=20)
 parser.add_argument('--vis-freq', help='Visualize progress every so iterations', type=int, default=500)
+
+#BH
+parser.add_argument('--gaussian-noise', help='Add gaussian noise', type=float, default=-1)
 args = parser.parse_args()
 
 # Random seed
@@ -604,7 +607,8 @@ def train(epoch, model):
         #   compute z = f(x)
         #   maximize log p(x) = log p(z) - log |det df/dx|
 
-        # x = x + 0.2 * torch.randn_like(x)
+        if args.gaussian_noise != -1:
+            x = x + args.gaussian_noise * torch.randn_like(x)
         x = x.to(device)
 
         beta = beta = min(1, global_itr / args.annealing_iters) if args.annealing_iters > 0 else 1.
