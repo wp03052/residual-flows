@@ -608,6 +608,8 @@ def train(epoch, model):
         #   maximize log p(x) = log p(z) - log |det df/dx|
 
         if args.gaussian_noise != -1:
+            import pdb
+            pdb.set_trace()
             x = x + args.gaussian_noise * torch.randn_like(x)
         x = x.to(device)
 
