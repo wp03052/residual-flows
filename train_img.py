@@ -608,9 +608,7 @@ def train(epoch, model):
         #   maximize log p(x) = log p(z) - log |det df/dx|
 
         if args.gaussian_noise != -1:
-            import pdb
-            pdb.set_trace()
-            x = x + args.gaussian_noise * torch.randn_like(x)
+            x = torch.clamp(x + args.gaussian_noise * torch.randn_like(x), 0., 1.)
         x = x.to(device)
 
         beta = beta = min(1, global_itr / args.annealing_iters) if args.annealing_iters > 0 else 1.
