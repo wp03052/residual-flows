@@ -419,13 +419,13 @@ elif args.data == 'dots':
     train_loader = torch.utils.data.DataLoader(
         # torch.utils.data.TensorDataset(train_imgs, train_labels),
         datasets.Dots(train_imgs, train_labels),
-        batch_size=args.val_batchsize,
+        batch_size=args.batchsize,
         shuffle=True,
         num_workers=args.nworkers,
     )
     test_loader = torch.utils.data.DataLoader(
         torch.utils.data.TensorDataset(test_imgs, test_labels),
-        batch_size=args.batchsize,
+        batch_size=args.val_batchsize,
         shuffle=False,
         num_workers=args.nworkers,
     )
@@ -647,6 +647,8 @@ def train(epoch, model):
         # for each sample x:
         #   compute z = f(x)
         #   maximize log p(x) = log p(z) - log |det df/dx|
+        import pdb
+        pdb.set_trace()
 
         if args.gaussian_noise != -1:
             x = torch.clamp(x + args.gaussian_noise * torch.randn_like(x), 0., 1.)
