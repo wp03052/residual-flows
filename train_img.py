@@ -647,8 +647,6 @@ def train(epoch, model):
         # for each sample x:
         #   compute z = f(x)
         #   maximize log p(x) = log p(z) - log |det df/dx|
-        import pdb
-        pdb.set_trace()
 
         if args.gaussian_noise != -1:
             x = torch.clamp(x + args.gaussian_noise * torch.randn_like(x), 0., 1.)
