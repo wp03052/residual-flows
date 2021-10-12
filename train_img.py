@@ -873,23 +873,25 @@ def main():
         logger.info('Lipsh: {}'.format(pretty_repr(lipschitz_constants[-1])))
         logger.info('Order: {}'.format(pretty_repr(ords[-1])))
 
-        if args.ema_val:
-            test_bpd = validate(epoch, model, ema)
-        else:
-            test_bpd = validate(epoch, model)
+        if (epoch == 0) or (epoch % 10 == 0):
+            if args.ema_val:
+                test_bpd = validate(epoch, model, ema)
+            else:
+                test_bpd = validate(epoch, model)
 
         if args.scheduler and scheduler is not None:
             scheduler.step()
 
-        if test_bpd < best_test_bpd:
-            best_test_bpd = test_bpd
-            utils.save_checkpoint({
-                'state_dict': model.state_dict(),
-                'optimizer_state_dict': optimizer.state_dict(),
-                'args': args,
-                'ema': ema,
-                'test_bpd': test_bpd,
-            }, os.path.join(args.save, 'models'), epoch, last_checkpoints, num_checkpoints=5)
+        if (epoch == 0) or (epoch % 10 == 0):
+            if test_bpd < best_test_bpd:
+                best_test_bpd = test_bpd
+                utils.save_checkpoint({
+                    'state_dict': model.state_dict(),
+                    'optimizer_state_dict': optimizer.state_dict(),
+                    'args': args,
+                    'ema': ema,
+                    'test_bpd': test_bpd,
+                }, os.path.join(args.save, 'models'), epoch, last_checkpoints, num_checkpoints=5)
 
         torch.save({
             'state_dict': model.state_dict(),
