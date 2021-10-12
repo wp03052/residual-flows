@@ -392,7 +392,7 @@ elif args.data == 'imagenet64':
     )
 elif args.data == 'dots':
     im_dim = 3
-    init_layer = layers.LogitTransform(0.05)
+    init_layer = layers.LogitTransform(1e-6)
     n_classes = 1
 
     imgs = []
@@ -417,7 +417,8 @@ elif args.data == 'dots':
     logger.info(f'train imgs shape: {train_imgs.shape} / test imgs shape: {test_imgs.shape}')
 
     train_loader = torch.utils.data.DataLoader(
-        torch.utils.data.TensorDataset(train_imgs, train_labels),
+        # torch.utils.data.TensorDataset(train_imgs, train_labels),
+        datasets.Dots(train_imgs, train_labels),
         batch_size=args.val_batchsize,
         shuffle=True,
         num_workers=args.nworkers,

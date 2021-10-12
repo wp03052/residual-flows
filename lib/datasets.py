@@ -1,5 +1,6 @@
 import torch
 import torchvision.datasets as vdsets
+import numpy as np
 
 
 class Dataset(object):
@@ -101,3 +102,13 @@ class Imagenet64(Dataset):
 
     def __init__(self, train=True, transform=None):
         return super(Imagenet64, self).__init__(self.TRAIN_LOC if train else self.TEST_LOC, transform, in_mem=False)
+
+
+class Dots(torch.utils.data.TensorDataset):
+
+    def __getitem__(self, index):
+        x, y = tuple(tensor[index] for tensor in self.tensors)
+        x = x + 0.03 * torch.randn(size=x.shape, dtype=x.dtype, device=x.device)
+        x = 1.0 - torch.abs(1.0 - x)
+        x = torch.abs(x)
+        return (x, y)
