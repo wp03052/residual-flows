@@ -392,7 +392,7 @@ elif args.data == 'imagenet64':
     )
 elif args.data == 'dots':
     im_dim = 3
-    init_layer = layers.LogitTransform(1e-6)
+    init_layer = layers.LogitTransform(0.05)
     n_classes = 1
 
     imgs = []
@@ -406,15 +406,15 @@ elif args.data == 'dots':
         labels.append(3*np.ones(shape=img.shape[0]))
 
     train_imgs = np.concatenate(imgs[:-1])
-    train_imgs = torch.Tensor(train_imgs)
+    train_imgs = torch.Tensor(train_imgs).permute(0, 3, 1, 2)
     train_labels = np.concatenate(labels[:-1])
     train_labels = torch.Tensor(train_labels)
 
     test_imgs = imgs[-1]
-    test_imgs = torch.Tensor(test_imgs)
+    test_imgs = torch.Tensor(test_imgs).permute(0, 3, 1, 2)
     test_labels = labels[-1]
     test_labels = torch.Tensor(test_labels)
-    print(f'train imgs shape: {train_imgs.shape} / test imgs shape: {test_imgs.shape}')
+    logger.info(f'train imgs shape: {train_imgs.shape} / test imgs shape: {test_imgs.shape}')
 
     train_loader = torch.utils.data.DataLoader(
         torch.utils.data.TensorDataset(train_imgs, train_labels),
