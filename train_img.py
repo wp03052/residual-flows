@@ -31,6 +31,7 @@ parser.add_argument(
         'celeba_5bit',
         'imagenet32',
         'imagenet64',
+        'dots',
     ]
 )
 parser.add_argument('--dataroot', type=str, default='data')
@@ -389,6 +390,45 @@ elif args.data == 'imagenet64':
             add_noise,
         ])), batch_size=args.val_batchsize, shuffle=False, num_workers=args.nworkers
     )
+elif args.data == 'dots':
+    im_dim = 3
+    init_layer = layers.LogitTransform(1e-6)
+    n_classes = 1
+
+    imgs = []
+    labels = []
+    db_path = [os.path.join('data/dots/', '3_dots')]
+    db_files = [os.listdir(path) for path in db_path]
+    for db_file in db_files[0]:
+        filename = os.path.join(db_path[0], db_file)
+        img = np.load(filename)['images']
+        imgs.append(img)
+        labels.append(3*np.ones(shape=img.shape[0]))
+
+    train_imgs = np.concatenate(imgs[:-1])
+    train_imgs = torch.Tensor(train_imgs)
+    train_labels = np.concatenate(labels[:-1])
+    train_labels = torch.Tensor(train_labels)
+
+    test_imgs = imgs[-1]
+    test_imgs = torch.Tensor(test_imgs)
+    test_labels = labels[-1]
+    test_labels = torch.Tensor(test_labels)
+    print(f'train imgs shape: {train_imgs.shape} / test imgs shape: {test_imgs.shape}')
+
+    train_loader = torch.utils.data.DataLoader(
+        torch.utils.data.TensorDataset(train_imgs, train_labels),
+        batch_size=args.val_batchsize,
+        shuffle=True,
+        num_workers=args.nworkers,
+    )
+    test_loader = torch.utils.data.DataLoader(
+        torch.utils.data.TensorDataset(test_imgs, test_labels),
+        batch_size=args.batchsize,
+        shuffle=False,
+        num_workers=args.nworkers,
+    )
+
 
 if args.task in ['classification', 'hybrid']:
     try:
