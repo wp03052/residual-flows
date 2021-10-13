@@ -418,13 +418,13 @@ elif args.data == 'dots':
 
     train_loader = torch.utils.data.DataLoader(
         # torch.utils.data.TensorDataset(train_imgs, train_labels),
-        datasets.Dots(train_imgs, train_labels),
+        datasets.Dots(train_imgs, train_labels, noisy=True, img_size=args.imagesize),
         batch_size=args.batchsize,
         shuffle=True,
         num_workers=args.nworkers,
     )
     test_loader = torch.utils.data.DataLoader(
-        torch.utils.data.TensorDataset(test_imgs, test_labels),
+        datasets.Dots(test_imgs, test_labels, noisy=False, img_size=args.imagesize),
         batch_size=args.val_batchsize,
         shuffle=False,
         num_workers=args.nworkers,
